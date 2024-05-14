@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec=https://www.thymeleaf.org/thymeleaf-extras-springsecurity6>
+<link rel="stylesheet" type="text/css" href="webjars/bootstrap/4.3.1/css/bootstrap.min.css" />
+
+<head>
+	<meta charset="utf-8">
+	<title>Liste des voyages</title>
+</head>
+
+<body>
+	<div th:replace="template"></div>
+	<div class="container mt-5">
+		<div class="card">
+			<div class="card-header">
+				Liste des voyages
+			</div>
+			<div class="card-body">
+
+				<table class="table table-striped">
+					<tr>
+						<th>ID</th>
+						<th>Depart</th>
+						<th>Prix</th>
+						<th>Date depart</th>
+						<th>Type voyage</th>
+						<th	sec:authorize="hasAuthority('ADMIN')" >Editer</th>
+						<th sec:authorize="hasAuthority('ADMIN')">Supprimer</th>
+
+						
+						
+					</tr>
+					<tr th:each="p:${voyages.content}">
+						<td th:text="${p.idvoyage}"></td>
+						<td th:text="${p.nomvoyage}"></td>
+						<td th:text="${p.prixvoyage}"></td>
+						<td th:text="${p.dateCreation}"></td>
+						<td th:if= "${!#strings.isEmpty(p.categorie)}" th:text="${p.categorie.nomCat}"></td>
+						 <td th:if= "${#strings.isEmpty(p.categorie)}" th:text="${'Pas de Catégorie'}"></td>
+						 <td  sec:authorize="hasAuthority('ADMIN')" ><a class="btn btn-success" th:href="@{modifiervoyage(id=${p.idvoyage}, page=${currentPage},size=${size})}">Editer</a></td>
+						 <td sec:authorize="hasAuthority('ADMIN')"><a class="btn btn-warning" onclick="return confirm('Etes-vous sûr ?')" th:href="@{supprimervoyage(id=${p.idvoyage},page=${currentPage},size=${size})}">Supprimer</a>
+
+					
+						
+<!--						<td sec:authorize="hasAuthority('ADMIN')"><a class="btn btn-warning" onclick="return confirm('Etes-vous sûr ?')" …
+								th:href="@{supprimervoyage(id=${v.idvoyage},page=${currentPage},size=${size})}">Supprimer</a>-->
+								
+								
+					</tr>
+				</table>
+				<ul class="nav nav-pills">
+					<li th:each="page,status:${pages}">
+						<a th:class="${status.index==currentPage?'btn btn-primary':'btn' }"
+							th:href="@{ Listevoyages(page=${status.index}, size=${size} ) }"
+							th:text="${status.index }"></a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>
+
+
+
