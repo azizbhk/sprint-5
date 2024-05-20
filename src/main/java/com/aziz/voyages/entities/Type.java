@@ -2,6 +2,7 @@ package com.aziz.voyages.entities;
 
 import java.util.List;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
@@ -9,9 +10,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+@Data
 
+@AllArgsConstructor
 @Entity
-public class Categorie {
+public class Type {
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 
@@ -20,19 +25,19 @@ public class Categorie {
 	private String nomCat;
 	private String descriptionCat;
 	
-	
-	@OneToMany(mappedBy = "categorie")
 	@JsonIgnore
-	private List<voyage> voyages;
+	@OneToMany(mappedBy = "type")
+	
+	private List<Voyage> Voyages;
 
-	public Categorie() {
+	public Type() {
 	}
 
-	public Categorie(String nomCat, String descriptionCat, List<voyage> voyages) {
+	public Type(String nomCat, String descriptionCat, List<Voyage> Voyages) {
 		super();
 		this.nomCat = nomCat;
 		this.descriptionCat = descriptionCat;
-		this.voyages = voyages;
+		this.Voyages = Voyages;
 	}
 
 	public Long getIdCat() {
@@ -59,11 +64,11 @@ public class Categorie {
 		this.descriptionCat = descriptionCat;
 	}
 
-	public List<voyage> getvoyages() {
-		return voyages;
+	public List<Voyage> getvoyages() {
+		return Voyages;
 	}
 
-	public void setvoyages(List<voyage> voyages) {
-		this.voyages = voyages;
+	public void setvoyages(List<Voyage> Voyages) {
+		this.Voyages = Voyages;
 	}
 }

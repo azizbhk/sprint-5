@@ -18,55 +18,55 @@ import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 @Entity
 
-public class voyage {
+public class Voyage {
 	@Id
 	@GeneratedValue (strategy = GenerationType.IDENTITY)
 	private Long idvoyage;
 	@NotNull
 	@Size (min = 4,max = 15)
-	private String nomvoyage;
+	private String nomVoyage;
 	@Min(value = 10)
 	@Max(value = 10000)
-	private Double prixvoyage;
+	private Double prixVoyage;
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@PastOrPresent
 	private Date dateCreation;
 	@ManyToOne
-	private Categorie categorie;
-	public Categorie getCategorie() {
-		return categorie;
+	private Type type;
+	public Type gettype() {
+		return type;
 	}
-	public void setCategorie(Categorie categorie) {
-		this.categorie = categorie;
+	public void settype(Type type) {
+		this.type = type;
 	}
 	public Long getIdvoyage() {
 		return idvoyage;
 	}
-	public voyage() {
+	public Voyage() {
 		super();
 	
 	}
-	public voyage(String nomvoyage, Double prixvoyage, Date dateCreation) {
+	public Voyage(String nomVoyage, Double prixVoyage, Date dateCreation) {
 		super();
-		this.nomvoyage = nomvoyage;
-		this.prixvoyage = prixvoyage;
+		this.nomVoyage = nomVoyage;
+		this.prixVoyage = prixVoyage;
 		this.dateCreation = dateCreation;
 	}
 	public void setIdvoyage(Long idvoyage) {
 		this.idvoyage = idvoyage;
 	}
-	public String getNomvoyage() {
-		return nomvoyage;
+	public String getnomVoyage() {
+		return nomVoyage;
 	}
-	public void setNomvoyage(String nomvoyage) {
-		this.nomvoyage = nomvoyage;
+	public void setnomVoyage(String nomVoyage) {
+		this.nomVoyage = nomVoyage;
 	}
-	public Double getPrixvoyage() {
-		return prixvoyage;
+	public Double getprixVoyage() {
+		return prixVoyage;
 	}
-	public void setPrixvoyage(Double prixvoyage) {
-		this.prixvoyage = prixvoyage;
+	public void setprixVoyage(Double prixVoyage) {
+		this.prixVoyage = prixVoyage;
 	}
 	public Date getDateCreation() {
 		return dateCreation;
@@ -76,7 +76,7 @@ public class voyage {
 	}
 	@Override
 	public String toString() {
-		return "voyage [idvoyage=" + idvoyage + ", nomvoyage=" + nomvoyage + ", prixvoyage=" + prixvoyage
+		return "voyage [idvoyage=" + idvoyage + ", nomVoyage=" + nomVoyage + ", prixVoyage=" + prixVoyage
 				+ ", dateCreation=" + dateCreation + "]";
 	}
 

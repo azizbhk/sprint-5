@@ -1,92 +1,59 @@
 package com.aziz.voyages.security;
 
-import javax.sql.DataSource;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Collections;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import
+org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 
+import jakarta.servlet.http.HttpServletRequest;
 @Configuration
+@EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled=true)
 public class SecurityConfig {
-	
-	
+	@Bean
+	public SecurityFilterChain filterChain (HttpSecurity http) throws Exception
+	{ http.sessionManagement( session ->
+	session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+	.csrf( csrf -> csrf.disable())
+	.cors(cors -> cors.configurationSource(new CorsConfigurationSource()
+	{
+	 @Override
+	 public CorsConfiguration getCorsConfiguration(HttpServletRequest
+	request) {
+	 CorsConfiguration cors = new CorsConfiguration();
 
-	 @Bean
-	 SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {      
-		 	 http.authorizeHttpRequests((requests)->requests
-	                		.requestMatchers("/showCreate","/savevoyage").hasAnyAuthority("ADMIN","AGENT")
-	                		.requestMatchers("/Listevoyages").hasAnyAuthority("ADMIN","AGENT","USER")
-	                		.requestMatchers("/login","/webjars/**").permitAll()
-	                		.anyRequest().authenticated())
-                   	                
-	                .formLogin((formLogin) ->   formLogin
-	                		 		.loginPage("/login")
-	                		 		.defaultSuccessUrl("/") )
-	                
-	                .httpBasic(Customizer.withDefaults())
-	                .exceptionHandling((exception)-> exception.accessDeniedPage("/accessDenied"));
-	        return http.build();
-	    }
-	
-	
+	cors.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
+	cors.setAllowedMethods(Collections.singletonList("*"));
+	cors.setAllowedHeaders(Collections.singletonList("*"));
+	cors.setExposedHeaders(Collections.singletonList("Authorization"));
+	 return cors;
+	 }
+	 }))
 
-	   /* @Bean
-	    public InMemoryUserDetailsManager userDetailsService() {
-	      PasswordEncoder passwordEncoder = passwordEncoder ();
-	      System.out.println("Password Encoded BCRYPT :******************** ");
-	  	  System.out.println(passwordEncoder.encode("123"));
+	 .authorizeHttpRequests( requests -> requests
 
-	    	
-	    	UserDetails admin = User
-	    			.withUsername("admin")
-	                .password(passwordEncoder.encode("123"))
-	                .authorities("ADMIN")
-	                .build();
-	        UserDetails userNadhem = User
-	                .withUsername("aziz")
-	                .password(passwordEncoder.encode("123"))
-	                .authorities("AGENT","USER")
-	                .build();
-	        UserDetails user1 = User
-	                .withUsername("user1")
-	                .password(passwordEncoder.encode("123"))
-	                .authorities("USER")
-	                .build(); 
-	         
-	        return new InMemoryUserDetailsManager(admin, userNadhem,user1);
-	    }
-	    */
-	 
-	  /*  @Bean
-	    public UserDetailsService userDetailsService(DataSource dataSource) {  	
-	    	JdbcUserDetailsManager jdbcUserDetailsManager =new JdbcUserDetailsManager(dataSource);
-	    	
-	    	jdbcUserDetailsManager.setUsersByUsernameQuery("select username , password , enabled from user where username =?");
-	    	jdbcUserDetailsManager.setAuthoritiesByUsernameQuery("SELECT u.username, r.role as authority   " +
-	    			"FROM user_role ur, user u , role r " +
-	    	        "WHERE u.user_id = ur.user_id AND ur.role_id = r.role_id AND u.username = ?");
-	    	
-	    	return jdbcUserDetailsManager;
-	    }
-	    */
-		    
-	    @Bean
-	    public BCryptPasswordEncoder passwordEncoder () {
-	  	  return new BCryptPasswordEncoder();
-	    }
-
-	    
-	  
-
+	.requestMatchers("/api/all/**").hasAnyAuthority("ADMIN","USER")
+	.requestMatchers(HttpMethod.GET,"/api/getbyid/**").hasAnyAuthority("ADMIN","USER")
+	//.requestMatchers(HttpMethod.POST,"/api/addevent/**").hasAnyAuthority("ADMIN")
+	.requestMatchers(HttpMethod.PUT,"/api/updateevent/**").hasAuthority("ADMIN")
+	.requestMatchers(HttpMethod.DELETE,"/api/delevent/**").hasAuthority("ADMIN")
+	.requestMatchers("/type/**").hasAnyAuthority("ADMIN","USER")
+	.anyRequest().authenticated() )
+	.addFilterBefore(new JWTAuthorizationFilter(),
+	 UsernamePasswordAuthenticationFilter.class);
+	return http.build();
+	}
 }

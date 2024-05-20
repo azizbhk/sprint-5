@@ -1,6 +1,8 @@
-package com.aziz.voyages.restcontrollers;
+package com.aziz.voyages.RESTControllers;
 
 import java.util.List;
+
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -10,42 +12,43 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.aziz.voyages.entities.voyage;
-import com.aziz.voyages.service.voyageService;
+import com.aziz.voyages.entities.Voyage;
+import com.aziz.voyages.service.VoyageService;
+
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin
+@CrossOrigin("*")
 public class VoyageRESTController {
 	@Autowired
-	voyageService VoyageService;
+	VoyageService voyageService;
 
 	@RequestMapping(method = RequestMethod.GET)
-	public List<voyage> getAllvoyages() {
-		return VoyageService.getAllvoyages();
+	public List<Voyage> getAllvoyages() {
+		return voyageService.getAllVoyages();
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public voyage getvoyageById(@PathVariable("id") Long id) {
-		return VoyageService.getvoyage(id);
+	public Voyage getvoyageById(@PathVariable("id") Long id) {
+		return voyageService.getVoyage(id);
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public voyage createvoyage(@RequestBody voyage voyage) {
-		return VoyageService.savevoyage(voyage);
+	public Voyage createvoyage(@RequestBody Voyage Voyage) {
+		return voyageService.saveVoyage(Voyage);
 	}
 	@RequestMapping(method = RequestMethod.PUT)
-	public voyage updatevoyage(@RequestBody voyage voyage) {
-		return VoyageService.updatevoyage(voyage);
+	public Voyage updatevoyage(@RequestBody Voyage Voyage) {
+		return voyageService.updateVoyage(Voyage);
 	}
 	@RequestMapping(value="/{id}",method = RequestMethod.DELETE)
 	public void deletevoyage(@PathVariable("id") Long id)
 	{
-	VoyageService.deletevoyageById(id);
+	voyageService.deleteVoyageById(id);
 	}
 	@RequestMapping(value="/voyagescat/{idCat}",method = RequestMethod.GET)
-	public List<voyage> getvoyagesByCatId(@PathVariable("idCat") Long idCat) {
-	return VoyageService.findByCategorieIdCat(idCat);
+	public List<Voyage> getvoyagesByCatId(@PathVariable("idCat") Long idCat) {
+	return voyageService.findByTypeId(idCat);
 	}
 
 	
